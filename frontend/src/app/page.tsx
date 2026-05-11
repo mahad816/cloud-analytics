@@ -7,7 +7,8 @@ import DatasetList from '../components/DatasetList';
 import Dashboard from '../components/Dashboard';
 import type { Dataset } from '../types';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+// Same-origin /api is rewritten by Next.js to the backend (works on EC2 without baking a public IP).
+const API_URL = process.env.NEXT_PUBLIC_API_URL?.trim() || '/api';
 
 export default function Home() {
   const [datasets, setDatasets]         = useState<Dataset[]>([]);

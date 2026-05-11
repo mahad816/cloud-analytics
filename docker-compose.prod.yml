@@ -1,16 +1,14 @@
 version: '3.8'
 
-# Production compose — used on the EC2 server.
-# Requires a .env file with EC2_IP set (see README).
+# Production compose — EC2 / VPS. Frontend uses /api → Next rewrites to backend (no public IP in the bundle).
 
 services:
   backend:
     build: ./backend
     restart: unless-stopped
     environment:
-      # SQLite file lives inside a named volume so it survives restarts
       DATABASE_URL: sqlite:////data/analytics.db
-      FRONTEND_ORIGINS: "http://${EC2_IP}:3000"
+      FRONTEND_ORIGINS: "*"
     ports:
       - "8000:8000"
     volumes:
@@ -21,8 +19,7 @@ services:
     build:
       context: ./frontend
       args:
-        # Bakes the EC2 IP into the Next.js bundle at build time
-        NEXT_PUBLIC_API_URL: "http://${EC2_IP}:8000"
+        INTERNAL_API_URL: http://backend:8000
     restart: unless-stopped
     ports:
       - "3000:3000"
